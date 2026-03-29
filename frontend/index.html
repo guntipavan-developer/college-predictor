@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>College Predictor | AI-Powered</title>
+  <meta name="description" content="Find your perfect engineering college based on your EAMCET rank, category, and branch using AI-powered predictions."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet"/>
+  <style>
+/* ══════════════════════════════════════════════
+   BASE
+══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0eef8;
+  --bg2: #ece9f7;
+  --white: #ffffff;
+  --card-shadow: 0 4px 32px rgba(100,80,200,.10), 0 1px 6px rgba(0,0,0,.06);
+  --blue: #4361ee;
+  --purple: #7c3aed;
+  --grad: linear-gradient(90deg, #4361ee 0%, #7c3aed 100%);
+  --grad-btn: linear-gradient(90deg, #3b5bdd 0%, #6d28d9 100%);
+  --text: #1a1a2e;
+  --text2: #4a4a72;
+  --text3: #8888aa;
+  --border: #ddd9f0;
+  --input-bg: #fafafe;
+  --focus: rgba(67,97,238,.18);
+  --red: #e53e3e;
+  --green: #059669;
+  --amber: #d97706;
+  --r: 12px;
+  --r-lg: 18px;
+  --r-btn: 10px;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+}
+
+/* subtle radial tint */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 900px 700px at 0%   0%,  rgba(124,58,237,.07) 0%, transparent 65%),
+    radial-gradient(ellipse 700px 600px at 100% 100%, rgba(67,97,238,.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+header {
+  position: relative; z-index: 10;
+  background: rgba(255,255,255,.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(200,195,230,.5);
+}
+
+.nav {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 14px rgba(67,97,238,.3);
+}
+
+.brand-text { line-height: 1.15; }
+.brand-name {
+  font-size: .97rem; font-weight: 700;
+  color: var(--blue);
+}
+.brand-tagline {
+  font-size: .68rem; color: var(--text3);
+  font-weight: 400;
+}
+
+.ml-badge {
+  display: flex; align-items: center; gap: .4rem;
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.2);
+  color: var(--purple);
+  font-size: .75rem; font-weight: 600;
+  padding: .32rem .85rem;
+  border-radius: 100px;
+  letter-spacing: .02em;
+}
+
+.ml-badge::before {
+  content: '✦';
+  font-size: .65rem;
+  color: var(--amber);
+}
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+.hero {
+  position: relative; z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3.5rem 1.5rem 5rem;
+}
+
+.hero-headline {
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: .75rem;
+  line-height: 1.15;
+}
+
+.hero-headline .highlight {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: .97rem;
+  color: var(--text2);
+  text-align: center;
+  max-width: 440px;
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   PREDICTOR CARD
+══════════════════════════════════════════════ */
+.card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--card-shadow);
+  padding: 2rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid rgba(210,205,240,.6);
+}
+
+/* Rank field */
+.field { margin-bottom: 1.2rem; }
+
+.field-label {
+  display: flex; align-items: center; gap: .3rem;
+  font-size: .8rem; font-weight: 600;
+  color: var(--text2);
+  margin-bottom: .45rem;
+}
+
+.field-label .req { color: var(--red); font-size: .75rem; }
+
+.input-wrap { position: relative; }
+
+.input-wrap input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: .75rem 3.5rem .75rem 1rem;
+  font-family: inherit;
+  font-size: .92rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.input-wrap input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.input-wrap input::placeholder { color: var(--text3); }
+
+.input-tag {
+  position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
+  background: rgba(67,97,238,.1);
+  color: var(--blue);
+  font-size: .67rem; font-weight: 700;
+  padding: .2rem .5rem;
+  border-radius: 6px;
+  letter-spacing: .04em;
+  pointer-events: none;
+}
+
+/* Select row */
+.selects-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: 1.4rem;
+}
+
+@media (max-width: 480px) { .selects-row { grid-template-columns: 1fr; } }
+
+.select-field {}
+
+.select-label {
+  font-size: .78rem; font-weight: 600;
+  color: var(--text2);
+  margin-bottom: .4rem;
+  display: flex; align-items: center; gap: .25rem;
+}
+.select-label .req { color: var(--red); }
+
+.select-wrap { position: relative; }
+
+select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: .68rem .75rem;
+  font-family: inherit;
+  font-size: .83rem;
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color .18s, box-shadow .18s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 2rem;
+}
+
+select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+select option { color: var(--text); background: #fff; }
+
+/* Submit button */
+.btn-submit {
+  width: 100%;
+  padding: .9rem 1.5rem;
+  border-radius: var(--r-btn);
+  border: none;
+  background: var(--grad-btn);
+  color: #fff;
+  font-family: inherit;
+  font-size: .97rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .015em;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  transition: opacity .15s, transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 18px rgba(67,97,238,.35);
+  margin-bottom: .85rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+  opacity: .93;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(67,97,238,.42);
+}
+
+.btn-submit:active:not(:disabled) { transform: none; }
+
+.btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-icon { font-size: 1rem; }
+
+.card-hint {
+  text-align: center;
+  font-size: .73rem;
+  color: var(--text3);
+}
+
+/* spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .65s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════════════════
+   ALERT
+══════════════════════════════════════════════ */
+.alert {
+  width: 100%; max-width: 440px;
+  margin-top: 1rem;
+  border-radius: var(--r);
+  padding: .75rem 1rem;
+  font-size: .83rem; font-weight: 500;
+  display: flex; align-items: flex-start; gap: .6rem;
+}
+
+.alert-error {
+  background: #fff5f5;
+  border: 1.5px solid #feb2b2;
+  color: #c53030;
+}
+
+/* ══════════════════════════════════════════════
+   RESULTS SECTION
+══════════════════════════════════════════════ */
+.results-wrap {
+  width: 100%; max-width: 780px;
+  margin-top: 2.5rem;
+  animation: fadeUp .4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.res-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.res-title {
+  font-size: 1.1rem; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: .5rem;
+}
+
+.res-count {
+  background: rgba(67,97,238,.1);
+  color: var(--blue);
+  font-size: .7rem; font-weight: 700;
+  padding: .18rem .6rem;
+  border-radius: 100px;
+  border: 1px solid rgba(67,97,238,.2);
+}
+
+.res-tags { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+.res-tag {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: .22rem .75rem;
+  font-size: .72rem; font-weight: 600;
+  color: var(--text2);
+}
+
+/* Table */
+.res-table-wrap {
+  background: var(--white);
+  border: 1px solid rgba(210,205,240,.8);
+  border-radius: var(--r-lg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f7f5ff;
+  border-bottom: 1px solid var(--border);
+}
+
+thead th {
+  padding: .8rem 1.25rem;
+  text-align: left;
+  font-size: .7rem; font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: .95rem 1.25rem;
+  font-size: .88rem;
+  color: var(--text);
+  border-bottom: 1px solid #f0eef8;
+  vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .12s; }
+tbody tr:hover { background: #faf9ff; }
+
+/* rank badge */
+.rank-badge {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 700;
+}
+.rb-1 { background: rgba(251,191,36,.15); color: #b45309; }
+.rb-2 { background: rgba(148,163,184,.15); color: #475569; }
+.rb-3 { background: rgba(251,146,60,.12); color: #c2410c; }
+.rb-n { background: #f0eef8; color: var(--text3); }
+
+.college-name { font-weight: 600; font-size: .9rem; color: var(--text); }
+.college-meta { font-size: .73rem; color: var(--text3); margin-top: .1rem; }
+
+.cutoff-val {
+  font-size: .92rem; font-weight: 700;
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+
+/* progress */
+.prog-row { display: flex; align-items: center; gap: .6rem; }
+.prog-bg {
+  flex: 1; height: 5px; border-radius: 10px;
+  background: #ede9fe; overflow: hidden;
+  min-width: 60px;
+}
+.prog-fill { height: 100%; border-radius: 10px; }
+.prog-lbl { font-size: .7rem; font-weight: 700; white-space: nowrap; }
+
+/* ══════════════════════════════════════════════
+   EMPTY
+══════════════════════════════════════════════ */
+.empty-box {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+.empty-box .ei { font-size: 2.5rem; margin-bottom: .6rem; }
+.empty-box h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; color: var(--text); }
+.empty-box p  { font-size: .83rem; color: var(--text2); line-height:1.6; }
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+footer {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: .73rem;
+  color: var(--text3);
+  border-top: 1px solid rgba(200,195,230,.4);
+  margin-top: auto;
+}
+
+/* ══════════════════════════════════════════════
+   3D AI LOADER OVERLAY
+══════════════════════════════════════════════ */
+.loader-overlay {
+  position: fixed; 
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 999999;
+  background-color: rgba(240, 238, 248, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex !important; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+.loader-overlay.active {
+  opacity: 1; visibility: visible; pointer-events: all;
+}
+
+.loader-content {
+  display: flex; flex-direction: column; align-items: center; gap: 3.5rem;
+}
+
+/* The SVG Wrapper */
+.loader-svg-wrap {
+  width: 180px; height: 180px;
+  filter: drop-shadow(0 15px 30px rgba(124, 58, 237, 0.35));
+}
+.grad-cap {
+  transform-origin: 100px 100px;
+  animation: floatCap 4s ease-in-out infinite;
+}
+.search-lens {
+  transform-origin: 100px 100px;
+  animation: sweepLens 2.2s ease-in-out infinite alternate;
+}
+.tassel {
+  transform-origin: 100px 65px;
+  animation: swingTassel 4s ease-in-out infinite;
+}
+.t-b1 { animation: popBubble 1.5s infinite alternate; }
+.t-b2 { animation: popBubble 1.5s infinite alternate 0.5s; }
+.t-b3 { animation: popBubble 1.5s infinite alternate 1s; }
+
+@keyframes floatCap {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+@keyframes sweepLens {
+  0% { transform: translate(-10px, 0) scale(1) rotate(-5deg); }
+  100% { transform: translate(50px, -15px) scale(1.15) rotate(15deg); }
+}
+@keyframes swingTassel {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-10deg); }
+}
+@keyframes popBubble {
+  0% { transform: scale(0.5) translateY(10px); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: scale(1.2) translateY(-10px); opacity: 0.5; }
+}
+
+.loader-text {
+  font-size: 1.1rem; font-weight: 800;
+  background: var(--grad);
+  -webkit-background-clip: text; color: transparent;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  animation: breathe 1.5s infinite alternate ease-in-out;
+}
+@keyframes breathe {
+  0% { opacity: 0.5; transform: scale(0.98); } 
+  100% { opacity: 1; text-shadow: 0 0 15px rgba(124,58,237,0.4); transform: scale(1.02); }
+}
+  </style>
+</head>
+<body>
+
+<!-- ─── 3D LOADER OVERLAY ─── -->
+<div class="loader-overlay active" id="loaderOverlay">
+  <div class="loader-content">
+    <div class="loader-svg-wrap">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradTop" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#4361ee" />
+            <stop offset="100%" stop-color="#7c3aed" />
+          </linearGradient>
+          <linearGradient id="gradBase" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3b5bdd" />
+            <stop offset="100%" stop-color="#4c1d95" />
+          </linearGradient>
+          <linearGradient id="lensGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.8)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0.1)" />
+          </linearGradient>
+        </defs>
+
+        <!-- Floating Thinking Bubbles -->
+        <g class="thought-bubbles">
+          <circle cx="150" cy="50" r="8" fill="#fbbf24" class="t-b1" style="transform-origin: 150px 50px;" />
+          <circle cx="170" cy="80" r="12" fill="#f59e0b" class="t-b2" style="transform-origin: 170px 80px;" />
+          <circle cx="40" cy="40" r="10" fill="#fcd34d" class="t-b3" style="transform-origin: 40px 40px;" />
+        </g>
+
+        <!-- Graduation Cap (Student) -->
+        <g class="grad-cap">
+          <path d="M80 100 L80 140 C80 150 120 150 120 140 L120 100 Z" fill="url(#gradBase)" />
+          <path d="M30 90 L100 60 L170 90 L100 120 Z" fill="url(#gradTop)" stroke="#fff" stroke-width="2" />
+          <path d="M100 60 L125 125 L125 160" stroke="#f59e0b" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" class="tassel" />
+        </g>
+
+        <!-- Search Lens -->
+        <g class="search-lens">
+          <!-- Glass -->
+          <circle cx="60" cy="110" r="30" stroke="#fff" stroke-width="6" fill="url(#lensGrad)" />
+          <!-- Handle -->
+          <line x1="81" y1="131" x2="105" y2="155" stroke="#fff" stroke-width="8" stroke-linecap="round" />
+          <!-- Lens Glare -->
+          <path d="M45 95 A 25 25 0 0 1 75 95" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6" />
+        </g>
+      </svg>
+    </div>
+    <div class="loader-text" id="loaderText">Initializing Predictor...</div>
+  </div>
+</div>
+
+<!-- ─── NAV ─── -->
+<header>
+  <nav class="nav">
+    <a class="brand" href="/">
+      <div class="brand-icon">🎓</div>
+      <div class="brand-text">
+        <div class="brand-name">College Predictor</div>
+        <div class="brand-tagline">AI-Powered College Recommendations</div>
+      </div>
+    </a>
+    <div class="ml-badge">ML Powered</div>
+  </nav>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+
+  <h1 class="hero-headline">Find Your <span class="highlight">Perfect College</span></h1>
+  <p class="hero-sub">Enter your entrance exam rank and details to get personalized college recommendations based on machine learning analysis.</p>
+
+  <!-- Predictor card -->
+  <div class="card">
+
+    <!-- Rank input -->
+    <div class="field">
+      <div class="field-label">Entrance Exam Rank <span class="req">*</span></div>
+      <div class="input-wrap">
+        <input id="rank" type="number" min="1" max="300000" placeholder="Enter your rank (e.g., 1500)"/>
+        <span class="input-tag">#Rank</span>
+      </div>
+    </div>
+
+    <!-- Gender / Category / Branch -->
+    <div class="selects-row">
+      <div class="select-field">
+        <div class="select-label">Gender <span class="req">*</span></div>
+        <div class="select-wrap">
+          <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="BOYS">Male</option>
+            <option value="GIRLS">Female</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select-field">
+        <div class="select-label">Category <span class="req">*</span></div>
+        <div class="select-wrap">
+          <select id="category">
+            <option value="">Select Category</option>
+            <option value="OC">OC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="BCA">BC-A</option>
+            <option value="BCB">BC-B</option>
+            <option value="BCC">BC-C</option>
+            <option value="BCD">BC-D</option>
+            <option value="BCE">BC-E</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select-field">
+        <div class="select-label">Branch <span class="req">*</span></div>
+        <div class="select-wrap">
+          <select id="branchSelect">
+            <option value="">Select Branch</option>
+            <option value="CSE">CSE</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+            <option value="IT">IT</option>
+            <option value="CSM">AI &amp; ML</option>
+            <option value="CSD">Data Science</option>
+            <option value="AID">AI &amp; DS</option>
+            <option value="CSO">Cyber Security</option>
+            <option value="MEC">MEC</option>
+            <option value="CHE">Chemical</option>
+            <option value="BIO">Biotech</option>
+            <option value="PHM">Pharmacy</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="select-field">
+        <div class="select-label">Region / University</div>
+        <div class="select-wrap">
+          <select id="afflSelect">
+            <option value="ALL">All Regions</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button class="btn-submit" id="predictBtn" onclick="predict()">
+      <span class="btn-icon">🔍</span>
+      Get Predictions
+    </button>
+
+    <div class="card-hint">All fields are required. Enter your actual entrance exam rank.</div>
+  </div>
+
+  <!-- Alert area -->
+  <div id="alertArea"></div>
+
+  <!-- Results -->
+  <div id="resultsArea"></div>
+
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  Data sourced from official EAMCET counselling records &nbsp;·&nbsp; Results are indicative; always verify with official portals
+</footer>
+
+<script>
+  /* ─── init ─── */
+  async function init() {
+    try {
+      const res = await fetch('/stats');
+      const data = await res.json();
+      const afflSelect = document.getElementById('afflSelect');
+      if (data.affiliations) {
+        data.affiliations.forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = a; opt.textContent = a;
+          afflSelect.appendChild(opt);
+        });
+      }
+    } catch (e) {
+      console.error('Failed to load regions', e);
+    } finally {
+      setTimeout(() => {
+        const loader = document.getElementById('loaderOverlay');
+        if (loader) loader.classList.remove('active');
+      }, 1500); // 1.5 seconds loading experience
+    }
+  }
+  init();
+
+  /* ─── predict ─── */
+  async function predict() {
+    const rank     = document.getElementById('rank').value.trim();
+    const gender   = document.getElementById('gender').value;
+    const category = document.getElementById('category').value;
+    const branch   = document.getElementById('branchSelect').value;
+    const affl     = document.getElementById('afflSelect').value;
+    const alertEl  = document.getElementById('alertArea');
+    const resEl    = document.getElementById('resultsArea');
+
+    alertEl.innerHTML = '';
+    resEl.innerHTML   = '';
+
+    if (!rank || !gender || !category || !branch) {
+      alertEl.innerHTML = `<div class="alert alert-error">⚠️ All fields are required. Please fill in rank, gender, category, and branch.</div>`;
+      return;
+    }
+    if (parseInt(rank) < 1) {
+      alertEl.innerHTML = `<div class="alert alert-error">⚠️ Enter a valid rank (must be ≥ 1).</div>`;
+      return;
+    }
+
+    const btn = document.getElementById('predictBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>&ensp;Predicting…';
+
+    const loader = document.getElementById('loaderOverlay');
+    const loaderText = document.getElementById('loaderText');
+    const msgs = ["Evaluating ML Matrices...", "Filtering Cutoff Datasets...", "Ranking Perfect Matches..."];
+    let msgIdx = 0;
+    loaderText.textContent = msgs[0];
+    loader.classList.add('active');
+    
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % msgs.length;
+      loaderText.textContent = msgs[msgIdx];
+    }, 600);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1800)); // Artificial delay for premium UX
+      const url  = `/predict?rank=${rank}&branch=${encodeURIComponent(branch)}&category=${encodeURIComponent(category)}&gender=${gender}&affl=${encodeURIComponent(affl)}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+
+      if (data.error) {
+        alertEl.innerHTML = `<div class="alert alert-error">❌ ${data.error}</div>`;
+        return;
+      }
+
+      resEl.innerHTML = buildResults(data);
+      resEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch {
+      alertEl.innerHTML = `<div class="alert alert-error">❌ Could not reach the server. Is it running on port 8000?</div>`;
+    } finally {
+      clearInterval(msgInterval);
+      loader.classList.remove('active');
+      btn.disabled = false;
+      btn.innerHTML = '<span class="btn-icon">🔍</span> Get Predictions';
+    }
+  }
+
+  /* ─── build results HTML ─── */
+  function buildResults(data) {
+    const { colleges, input_rank, branch, category, gender } = data;
+    const gLabel = gender === 'BOYS' ? 'Male' : 'Female';
+
+    const tags = `
+      <div class="res-tags">
+        <span class="res-tag">Rank ${Number(input_rank).toLocaleString('en-IN')}</span>
+        <span class="res-tag">${branch}</span>
+        <span class="res-tag">${category}</span>
+        <span class="res-tag">${gLabel}</span>
+      </div>`;
+
+    if (!colleges.length) {
+      return `<div class="results-wrap">
+        ${tags}
+        <div class="res-table-wrap">
+          <div class="empty-box">
+            <div class="ei">🔎</div>
+            <h3>No colleges found</h3>
+            <p>No colleges have a closing rank above <strong>${Number(input_rank).toLocaleString('en-IN')}</strong>
+               for this combination.<br/>Try a higher rank or different branch/category.</p>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    const cutoffKey = Object.keys(colleges[0]).find(k => k !== 'college') || '';
+    const maxCutoff = Math.max(...colleges.map(c => Number(c[cutoffKey])));
+
+    const rows = colleges.map((c, i) => {
+      const n = i + 1;
+      const cls = n === 1 ? 'rb-1' : n === 2 ? 'rb-2' : n === 3 ? 'rb-3' : 'rb-n';
+      const cutoff = Number(c[cutoffKey]);
+      const pct    = Math.min(100, Math.round((cutoff / maxCutoff) * 100));
+      const color  = pct > 75 ? '#7c3aed' : pct > 45 ? '#4361ee' : '#059669';
+      const lbl    = n === 1 ? 'Best Match' : n <= 3 ? 'Strong' : 'Good';
+
+      return `<tr>
+        <td><div class="rank-badge ${cls}">${n}</div></td>
+        <td>
+          <div class="college-name">${c.college}</div>
+          <div class="college-meta">${branch} &middot; ${category} &middot; ${gLabel}</div>
+        </td>
+        <td><div class="cutoff-val">${cutoff.toLocaleString('en-IN')}</div></td>
+        <td>
+          <div class="prog-row">
+            <div class="prog-bg"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+            <span class="prog-lbl" style="color:${color}">${lbl}</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="results-wrap">
+      <div class="res-header">
+        <div class="res-title">🎓 Matching Colleges <span class="res-count">${colleges.length}</span></div>
+        ${tags}
+      </div>
+      <div class="res-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>College Name</th>
+              <th>Cutoff Rank</th>
+              <th>Match</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  /* ─── Enter key ─── */
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') predict(); });
+</script>
+</body>
+</html>
